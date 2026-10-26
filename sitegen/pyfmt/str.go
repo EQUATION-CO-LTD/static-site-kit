@@ -216,7 +216,7 @@ func Repr(s string) string {
 
 // ---------------------------------------------------------------- HTML
 
-// Esc は build.py の esc()。html.escape(str(s), quote=True)。None は空。
+// Esc は html.escape(str(s), quote=True)。None は空。
 // Go の html.EscapeString は ' を &#39; にするので使わない（Python は &#x27;）
 func Esc(v any) string {
 	if v == nil {
