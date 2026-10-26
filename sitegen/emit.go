@@ -97,6 +97,7 @@ func (s *Site) emit(html map[string]string) {
 		mustOK(os.MkdirAll(out, 0o755))
 	} else {
 		copyTree(s.path("static"), out)
+		s.swapCSS()
 	}
 	parents := parentURLs(s.pages)
 	for url, text := range html {
@@ -135,6 +136,10 @@ func (s *Site) emit(html map[string]string) {
 			swa = pyfmt.Dump(cfg, pyfmt.DumpDefault)
 		}
 		s.pruneUploads(swa)
+	}
+	if s.opts.Summary != nil {
+		fmt.Fprint(s.stdout, s.opts.Summary(len(s.pages), out))
+		return
 	}
 	fmt.Fprintf(s.stdout, "ページ %d → %s/\n", len(s.pages), out)
 }
@@ -202,4 +207,18 @@ func (s *Site) pruneUploads(swaConfig string) {
 		})
 	}
 	fmt.Fprintf(s.stdout, "使われていない WordPress の画像を外した: %dMB\n", removed/1048576)
+}
+
+// swapCSS は出力に写した CSS（*.css）の背景画像なども、画像の差し替えで置き換える。
+// 差し替えが無ければ何もしない（CSS の改行も変えない）
+func (s *Site) swapCSS() {
+	if len(s.opts.ImageSwaps) == 0 {
+		return
+	}
+	pyfmt.WalkFiles(s.out, func(rel string) {
+		if strings.HasSuffix(rel, ".css") {
+			p := s.out + "/" + rel
+			pyfmt.WriteText(p, SwapImages(pyfmt.ReadText(p), s.opts.ImageSwaps)) // 読み切ってから書く
+		}
+	})
 }

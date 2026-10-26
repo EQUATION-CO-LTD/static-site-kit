@@ -1,6 +1,7 @@
 {
   "site": "https://sample.example/",
   "company": "サンプル株式会社",
+  "description": "サンプル株式会社の公式サイトです。",
   "og_image": "/img/og.png",
   "logo": "/img/logo.png",
   "trailing_slash": true,
@@ -10,8 +11,23 @@
   "nav": [
     {"label": "ホーム", "url": "/"},
     {"label": "会社案内", "url": "/about/"},
-    {"label": "お知らせ", "url": "/news/"}
+    {"label": "お知らせ", "url": "/news/"},
+    {"label": "ノート", "url": "/notes/"}
   ],
+  "posts": {
+    "notes": {
+      "label": "ノート",
+      "cats": [["tips", "使い方"], ["story", "読み物"], ["empty", "空のカテゴリ"]],
+      "post_url": "notes/{yyyymmdd}/{id}",
+      "cat_url": "notes/cat/{cat}",
+      "cat_title": "{name}",
+      "cat_h1": "ノート（{name}）",
+      "description": "サンプル株式会社のノートです。",
+      "excerpt": true,
+      "nav": "/notes/",
+      "indent": 1
+    }
+  },
   "link_check_known": ["/legacy/"],
   "swa": {
     "navigationFallback": {"rewrite": "/404.html"},

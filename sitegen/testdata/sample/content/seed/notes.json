@@ -1,0 +1,6 @@
+[
+ {"id": "n1", "date": "2026-01-05", "title": "はじめの使い方", "category": "tips", "body": "<p>最初のノートです。</p>\n"},
+ {"id": "n2", "date": "2026-02-14", "title": "読み物その一", "category": "story", "body": "<p>読み物の本文です。</p>\n"},
+ {"id": "n3", "date": "2026-03-20", "title": "便利な設定", "category": "tips", "body": "<p>改訂前の本文です。</p>\n"},
+ {"id": "n4", "date": "2026-03-20", "title": "同じ日の読み物", "category": "story", "body": "<p>過去分の本文です。</p>\n"}
+]

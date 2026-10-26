@@ -23,12 +23,16 @@ type Options struct {
 	Dir string
 	// Static が空でなければ、出力に無いファイルをここ（static/ のパス）でも探す。static を写さずに作ったときに使う
 	Static string
+	// RawRefs が真なら、HTML のコメントの中も検査し、参照は二重引用符で囲んだ物だけを見て、パスの %XX を戻さずに探す
+	// （コメントの中の参照や単一引用符の参照を持たず、パーセントエンコードを使わないサイト向けの、素朴な検査）
+	RawRefs bool
 }
 
 var (
-	commentRe  = regexp.MustCompile(`(?s)<!--.*?-->`)
-	refAttrRe  = regexp.MustCompile(`(?:href|src)=(?:"([^"]+)"|'([^']+)')`)
-	externalRe = regexp.MustCompile(`^(https?:|//|mailto:|tel:|javascript:|#)`)
+	commentRe    = regexp.MustCompile(`(?s)<!--.*?-->`)
+	refAttrRe    = regexp.MustCompile(`(?:href|src)=(?:"([^"]+)"|'([^']+)')`)
+	doubleAttrRe = regexp.MustCompile(`(?:href|src)="([^"]+)"`)
+	externalRe   = regexp.MustCompile(`^(https?:|//|mailto:|tel:|javascript:|#)`)
 )
 
 // Check は出力の HTML の href と src を調べ、壊れた参照の一覧（「ページ: 理由 参照」）を返す。すべて解決すれば空。
@@ -71,7 +75,9 @@ func Check(o Options) (broken []string, err error) {
 	resolves := func(u string) bool {
 		path, _, _ := strings.Cut(u, "#")
 		path, _, _ = strings.Cut(path, "?")
-		path = pyfmt.Unquote(path)
+		if !o.RawRefs {
+			path = pyfmt.Unquote(path)
+		}
 		if path == "" || path == "/" || redirects[path] || strings.HasPrefix(path, "/.auth/") { // /.auth/ は SWA が応答する（ログイン・ログアウト）
 			return true
 		}
@@ -99,10 +105,15 @@ func Check(o Options) (broken []string, err error) {
 		if !utf8.Valid(raw) {
 			panic(fmt.Sprintf("UnicodeDecodeError: %s は UTF-8 として読めない", page))
 		}
-		text := commentRe.ReplaceAllString(pyfmt.UniversalNewlines(string(raw)), "") // コメントアウトされた部分は見ない
-		for _, m := range refAttrRe.FindAllStringSubmatch(text, -1) {
+		text := pyfmt.UniversalNewlines(string(raw))
+		attrRe := doubleAttrRe
+		if !o.RawRefs {
+			text = commentRe.ReplaceAllString(text, "") // コメントアウトされた部分は見ない
+			attrRe = refAttrRe
+		}
+		for _, m := range attrRe.FindAllStringSubmatch(text, -1) {
 			u := m[1]
-			if u == "" {
+			if u == "" && len(m) > 2 {
 				u = m[2]
 			}
 			if known[u] || externalRe.MatchString(u) {

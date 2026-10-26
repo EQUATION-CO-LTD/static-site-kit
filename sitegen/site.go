@@ -239,7 +239,24 @@ func (s *Site) loadFixedPages() {
 	}
 	pyfmt.WalkFiles(s.path("pages"), func(rel string) {
 		path := "pages/" + rel
-		meta, main := ParsePageSource(path, s.Read(path))
+		meta, main := ParsePageSourceBlocks(path, s.Read(path), s.opts.PageBlocks)
 		s.add(urlOf(path), meta, main, true)
 	})
+}
+
+// ContentIn は Content と同じ読み方で、中身のディレクトリ（Options.Content）の下の dir/{name}.json を 1 か所だけ読む。
+// dir が "." なら中身のディレクトリそのもの。無ければ ok=false
+func (s *Site) ContentIn(dir, name string) (data any, ok bool) {
+	p := fmt.Sprintf("%s/%s/%s.json", s.contentRoot(), dir, name)
+	if dir == "." {
+		p = fmt.Sprintf("%s/%s.json", s.contentRoot(), name)
+	}
+	v, _ := pyfmt.LoadJSONFile(p)
+	if v == nil {
+		return nil, false
+	}
+	if o, isObj := v.(*pyfmt.Obj); isObj && o.Has("contents") {
+		return o.At("contents"), true
+	}
+	return v, true
 }

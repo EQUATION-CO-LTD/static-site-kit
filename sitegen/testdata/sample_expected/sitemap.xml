@@ -10,4 +10,17 @@
   <url><loc>https://sample.example/news/a5/</loc></url>
   <url><loc>https://sample.example/news/page/2/</loc></url>
   <url><loc>https://sample.example/news/page/3/</loc></url>
+  <url><loc>https://sample.example/notes/</loc></url>
+  <url><loc>https://sample.example/notes/20260105/n1/</loc></url>
+  <url><loc>https://sample.example/notes/20260214/n2/</loc></url>
+  <url><loc>https://sample.example/notes/20260320/n3/</loc></url>
+  <url><loc>https://sample.example/notes/20260320/n4/</loc></url>
+  <url><loc>https://sample.example/notes/20260320/n6/</loc></url>
+  <url><loc>https://sample.example/notes/20260401/n5/</loc></url>
+  <url><loc>https://sample.example/notes/cat/story/</loc></url>
+  <url><loc>https://sample.example/notes/cat/story/page/2/</loc></url>
+  <url><loc>https://sample.example/notes/cat/tips/</loc></url>
+  <url><loc>https://sample.example/notes/cat/tips/page/2/</loc></url>
+  <url><loc>https://sample.example/notes/page/2/</loc></url>
+  <url><loc>https://sample.example/notes/page/3/</loc></url>
 </urlset>

@@ -132,7 +132,8 @@ func (sampleLayout) Values(s *sitegen.Site, url string, m *sitegen.Meta, main st
 func sampleOptions(out string) sitegen.Options {
 	return sitegen.Options{
 		Dir: sampleDir, Out: out, Today: "2026-06-01", Stdout: io.Discard,
-		Builders: []sitegen.Builder{sampleNews{}}, Layout: sampleLayout{}, SWAConfig: true,
+		Builders: []sitegen.Builder{sampleNews{}, sitegen.ListDetailsFrom("posts", nil)}, Layout: sampleLayout{}, SWAConfig: true,
+		ImageSwaps: []sitegen.ImageSwap{{From: "/img/bg.png", To: "/img/bg-new.png"}, {From: "/img/logo.png", To: "/img/logo-new.png"}},
 	}
 }
 

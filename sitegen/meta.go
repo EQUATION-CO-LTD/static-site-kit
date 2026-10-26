@@ -102,9 +102,15 @@ func (m *Meta) WithLD(n ...*pyfmt.Obj) *Meta {
 
 var metaBlockRe = regexp.MustCompile(`(?s)^<!--\n(.*?)-->\n`)
 
-// ParsePageSource は固定ページの原稿を、先頭のコメントのメタ情報（1 行 1 つの `キー: 値`）と本文に分ける。
+// ParsePageSource は固定ページの原稿を、先頭のコメントのメタ情報（1 行 1 つ `キー: 値`）と本文に分ける。
 // path は誤りのメッセージに出すだけ
-func ParsePageSource(path, src string) (*Meta, string) {
+func ParsePageSource(path, src string) (*Meta, string) { return ParsePageSourceBlocks(path, src, nil) }
+
+// ParsePageSourceBlocks は ParsePageSource に加えて、メタ情報の直後に続く囲みブロック
+// （`<!-- 名前 -->` から `<!-- /名前 -->` まで。どちらも行末の改行まで）を blocks の順に読む。
+// 読んだ中身は、名前の - を _ にしたキー（head-meta なら head_meta）の Meta.Extra に入り、本文から除かれる。
+// ブロックは書かなくてよく、書くなら blocks の順で隙間なく続ける（順が違うブロックは本文として残る）
+func ParsePageSourceBlocks(path, src string, blocks []string) (*Meta, string) {
 	loc := metaBlockRe.FindStringSubmatchIndex(src)
 	if loc == nil {
 		Die("%s: 先頭にメタ情報のコメントがない", path)
@@ -122,5 +128,14 @@ func ParsePageSource(path, src string) (*Meta, string) {
 	if !hasTitle { // 空の title は許すが、書き忘れは止める
 		Die("%s: メタ情報に title がない", path)
 	}
-	return meta, src[loc[1]:]
+	main := src[loc[1]:]
+	for _, name := range blocks {
+		q := regexp.QuoteMeta(name)
+		re := regexp.MustCompile(`(?s)^<!-- ` + q + ` -->\n(.*?)<!-- /` + q + ` -->\n`)
+		if b := re.FindStringSubmatchIndex(main); b != nil {
+			meta.Set(strings.ReplaceAll(name, "-", "_"), main[b[2]:b[3]])
+			main = main[b[1]:]
+		}
+	}
+	return meta, main
 }

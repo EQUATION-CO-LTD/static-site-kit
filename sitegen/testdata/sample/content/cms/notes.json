@@ -1,0 +1,5 @@
+[
+ {"id": "n3", "date": "2026-03-20", "title": "便利な設定（改訂版）", "category": "tips", "eyecatch": "/img/og.png", "description": "設定の&quot;コツ&quot;を紹介します。", "body": "<p>改訂後の本文です。</p>\n"},
+ {"id": "n5", "date": "2026-04-01", "title": "新しい使い方", "category": "tips", "description": "&lt;新機能&gt;の紹介", "body": "<p>新しいノートです。</p>\n"},
+ {"id": "n6", "date": "2026-03-20", "title": "同じ日の取得分", "category": "story", "body": "<p>取得分の本文です。</p>\n"}
+]

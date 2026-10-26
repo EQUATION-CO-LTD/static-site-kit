@@ -48,6 +48,9 @@ type Config struct {
 	Objects []string
 	// ImgDir は画像の保存先（既定 DefaultImgDir）。ここにある画像のうち、今回参照されなかった物は消す
 	ImgDir string
+	// ImgParams は、画像をダウンロードするときに microCMS の画像 API に付けるパラメータ（api は取得中の API の名前）。
+	// 例えば幅 2400 まで許すなら "w=2400&fit=max"。nil なら "w=1600&fit=max"（幅 1600 に縮める。拡大はしない）
+	ImgParams func(api string) string
 	// Normalize は、画像を置き換えた後の項目（リスト型は 1 件ごと、オブジェクト型は全体）を整える。
 	// 日付を JST にそろえる、独自の形に整える、など。nil なら何もしない。返した物を書き出す
 	Normalize func(api string, item *pyfmt.Obj) *pyfmt.Obj
@@ -75,6 +78,7 @@ type Fetcher struct {
 	domain string
 	key    string
 	used   map[string]bool // 今回の取得で参照された画像。これ以外は microCMS で消されたものとして削除する
+	api    string          // 取得中の API の名前（ImgParams に渡す）
 }
 
 // New は取得の準備をする。domain は microCMS のサービスドメイン、key は読み取り専用の API キー
@@ -174,7 +178,7 @@ func (f *Fetcher) localImage(imageURL string) string {
 		must(os.MkdirAll(f.cfg.ImgDir, 0o755))
 		// 画像 API で幅を抑えて取る（元画像が巨大でも配信サイズを抑える。拡大はしない）
 		src, _, _ := strings.Cut(imageURL, "?")
-		f.download(fmt.Sprintf("%s?w=%d&fit=max", src, imgWidth), path+".tmp")
+		f.download(src+"?"+f.imgParams(), path+".tmp")
 		must(os.Rename(path+".tmp", path))
 	}
 	f.used[path] = true
@@ -281,6 +285,7 @@ func (f *Fetcher) Run(outDir string) (err error) {
 	var results []Result
 	for _, api := range f.cfg.Lists {
 		var items []any
+		f.api = api
 		for _, c := range f.getAll(api) {
 			items = append(items, f.normalize(api, pyfmt.AsObj(f.localize(c))))
 		}
@@ -291,6 +296,7 @@ func (f *Fetcher) Run(outDir string) (err error) {
 		fmt.Fprintf(f.Out, "%s: %d 件\n", api, len(items))
 	}
 	for _, api := range f.cfg.Objects {
+		f.api = api
 		if data, ok := f.getObject(api); ok {
 			results = append(results, Result{api, data})
 			fmt.Fprintf(f.Out, "%s: 取得\n", api)
@@ -338,4 +344,12 @@ func (f *Fetcher) getObject(api string) (data any, ok bool) {
 		}
 	}()
 	return f.normalize(api, pyfmt.AsObj(f.localize(f.get(api, nil)))), true
+}
+
+// imgParams は画像をダウンロードするときの画像 API のパラメータ
+func (f *Fetcher) imgParams() string {
+	if f.cfg.ImgParams != nil {
+		return f.cfg.ImgParams(f.api)
+	}
+	return fmt.Sprintf("w=%d&fit=max", imgWidth)
 }

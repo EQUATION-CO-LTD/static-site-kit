@@ -133,3 +133,22 @@ func TestReport(t *testing.T) {
 		t.Errorf("標準出力は先頭の 50 件: %d 行", len(lines))
 	}
 }
+
+// RawRefs は素朴な検査: コメントの中も見る・単一引用符の参照は見ない・%XX を戻さない
+func TestRawRefsChecksCommentsAndDoubleQuotesOnly(t *testing.T) {
+	dist := t.TempDir()
+	writeFiles(t, dist, map[string]string{
+		"staticwebapp.config.json": swaConfig,
+		"index.html":               "<!-- <a href=\"/in-comment/\">c</a> --><a href='/single/'>s</a><img src=\"/img/%E6%97%A5.png\"><a href=\"/ok/\">ok</a>",
+		"ok/index.html":            ``,
+		"img/日.png":                `png`,
+	})
+	d := site(t, `{}`)
+	if broken, _ := Check(Options{Dist: dist, Dir: d}); len(broken) != 1 || !strings.Contains(broken[0], "/single/") {
+		t.Errorf("既定: コメントの中は見ず、単一引用符は見て、%%XX は戻す: %v", broken)
+	}
+	broken, _ := Check(Options{Dist: dist, Dir: d, RawRefs: true})
+	if got := strings.Join(broken, "|"); got != "index.html: リンク切れ /in-comment/|index.html: リンク切れ /img/%E6%97%A5.png" {
+		t.Errorf("RawRefs: %s", got)
+	}
+}

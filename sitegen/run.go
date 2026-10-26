@@ -3,7 +3,8 @@
 // 同じ入力からは、いつ・どこで作っても同じバイト列になる。
 //
 // 流れは Run のとおり。サイト固有のページの組み立ては Builder、外枠（layout.html）の {{TOKEN}} の値は Layout を、
-// サイト側のコードで差し込む。SEO の部品（canonical・OGP・JSON-LD）は Site のメソッドとして出し、使うかは Layout が決める。
+// サイト側のコードで差し込む。記事（お知らせ・ブログ）の一覧・カテゴリ別・個別ページは定番の Builder の ListDetail が設定とテンプレートだけで作り、
+// 画像の差し替えは Options.ImageSwaps で全ページと CSS に当てる。SEO の部品（canonical・OGP・JSON-LD）は Site のメソッドとして出し、使うかは Layout が決める。
 //
 // 想定外の入力（足りないキー・型の違い）や設定の誤りは panic で止め、入口の Run が error にして返す。
 // 担当者が直せる誤りは Die で止める（*UserError になる）。
@@ -42,6 +43,15 @@ type Options struct {
 	// PruneUploads が空でなければ、出力のこのディレクトリ（例 "wp/wp-content/uploads"）の下の画像のうち、
 	// どのページ・CSS・JS・転送先からも参照されていない物を消す（SkipStatic のときは何もしない）
 	PruneUploads string
+	// PageBlocks は固定ページの先頭（メタ情報の直後）から読む囲みブロックの名前（ParsePageSourceBlocks）。
+	// 読んだ中身は Meta.Extra に入る（head-meta なら "head_meta"）
+	PageBlocks []string
+	// ImageSwaps は画像の差し替え。すべてのページ（外枠に差し込んだ後）と、出力に写した static の *.css に当てはめる
+	ImageSwaps []ImageSwap
+	// NoFragments が真なら、本文の {{NAME}} を部品として読まない（記事の本文に書かれた {{…}} をそのまま出す）
+	NoFragments bool
+	// Summary が非 nil なら、書き出しの最後の1行を作る（末尾の改行は付ける）。nil なら「ページ N → 出力先/」
+	Summary func(pages int, out string) string
 	// Stdout は進捗の出力先（既定は標準出力）
 	Stdout io.Writer
 }
@@ -106,7 +116,9 @@ func (s *Site) render() (map[string]string, error) {
 		if p.fixed && s.opts.FixedPageFilter != nil {
 			main = s.opts.FixedPageFilter(s, u, main)
 		}
-		main = s.FillFragments(main, "/"+u)
+		if !s.opts.NoFragments {
+			main = s.FillFragments(main, "/"+u)
+		}
 		var values map[string]string
 		if s.opts.Layout != nil {
 			v, err := s.opts.Layout.Values(s, u, p.meta, main)
@@ -121,7 +133,7 @@ func (s *Site) render() (map[string]string, error) {
 		if _, ok := values["MAIN"]; !ok {
 			values["MAIN"] = main
 		}
-		out[u] = Fill(s.layout, values, "layout.html")
+		out[u] = SwapImages(Fill(s.layout, values, "layout.html"), s.opts.ImageSwaps)
 	}
 	return out, nil
 }

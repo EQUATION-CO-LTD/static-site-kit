@@ -381,3 +381,43 @@ func TestLocalImageName(t *testing.T) {
 		}
 	}
 }
+
+// ImgParams で、API ごとに画像の取得のパラメータ（幅など）を変えられる
+func TestImgParamsPerAPI(t *testing.T) {
+	dir := t.TempDir()
+	s := newStub()
+	cfg := config(dir)
+	cfg.ImgParams = func(api string) string {
+		if api == "settings" {
+			return "w=2400"
+		}
+		return "w=1000"
+	}
+	f, _ := newFetcher(s, cfg)
+	if err := f.Run(dir + "/cms"); err != nil {
+		t.Fatal(err)
+	}
+	// 記事で使う 2 枚は 1000、設定の画像は記事で保存済みなので取り直さない
+	if len(s.imgReqs) != 2 {
+		t.Fatalf("画像の取得 %q", s.imgReqs)
+	}
+	for _, u := range s.imgReqs {
+		if !strings.HasSuffix(u, "?w=1000") {
+			t.Errorf("画像の取得 URL: %s", u)
+		}
+	}
+
+	// 設定だけが使う画像は 2400
+	s2 := newStub()
+	s2.raw["articles"] = `{"contents":[],"totalCount":0,"offset":0,"limit":100}`
+	dir2 := t.TempDir()
+	cfg2 := config(dir2)
+	cfg2.ImgParams = cfg.ImgParams
+	f, _ = newFetcher(s2, cfg2)
+	if err := f.Run(dir2 + "/cms"); err != nil {
+		t.Fatal(err)
+	}
+	if len(s2.imgReqs) != 1 || !strings.HasSuffix(s2.imgReqs[0], "?w=2400") {
+		t.Errorf("設定の画像の取得 %q", s2.imgReqs)
+	}
+}
