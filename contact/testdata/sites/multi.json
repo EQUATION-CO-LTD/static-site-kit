@@ -1,0 +1,387 @@
+{
+  "id": "multi",
+  "origins": [
+    "https://multi.example.jp",
+    "https://www.multi.example.jp",
+    "https://stg.multi.example.jp"
+  ],
+  "sender_name": "サンプルホールディングス",
+  "turnstile_secret_env": "TURNSTILE_SECRET_KEY_MULTI",
+  "signature": "--------------------------------------------------\nサンプルホールディングス\nhttps://multi.example.jp/\n--------------------------------------------------",
+  "targets": {
+    "hd": {
+      "label": "サンプルホールディングス",
+      "general": [
+        "it@example.jp"
+      ],
+      "recruit": [
+        "recruit@example.jp"
+      ]
+    },
+    "group01": {
+      "label": "サンプル運輸株式会社",
+      "general": [
+        "it@example.jp"
+      ],
+      "recruit": [
+        "recruit@example.jp"
+      ]
+    },
+    "group02": {
+      "label": "サンプル物流株式会社",
+      "general": [
+        "it@example.jp"
+      ],
+      "recruit": [
+        "recruit@example.jp"
+      ]
+    },
+    "group03": {
+      "label": "サンプル商事株式会社",
+      "general": [
+        "g03@example.jp"
+      ],
+      "recruit": [
+        "g03@example.jp"
+      ]
+    },
+    "group04": {
+      "label": "サンプル自動車工業有限会社",
+      "general": [
+        "g04@example.jp"
+      ],
+      "recruit": [
+        "g04@example.jp"
+      ]
+    }
+  },
+  "forms": {
+    "contact": {
+      "category": "general",
+      "default_target": "hd",
+      "target_from": "to",
+      "notice_subject": "【サンプル】お問い合わせフォームからのお問い合わせ（{target}）",
+      "notice_intro": "サンプルホールディングスのホームページ（お問い合わせフォーム）より、\n{target}宛のお問い合わせがありました。\nお問い合わせ内容は以下になります。",
+      "reply": {
+        "enabled": true,
+        "subject": "お問い合わせありがとうございます（サンプルホールディングス）",
+        "name_field": "your_name",
+        "intro": "この度はサンプルホールディングスへお問い合わせいただき、誠にありがとうございます。\n以下の内容で承りました。担当者より改めてご連絡いたしますので、\n恐れ入りますが今しばらくお待ちください。",
+        "outro": "※本メールはシステムからの自動返信です。\n　ご返信は本メールへそのまま返信いただければ担当者に届きます。"
+      },
+      "required": [
+        "your_company",
+        "your_name",
+        "addr",
+        "your_tel",
+        "your_email"
+      ],
+      "reply_to_field": "your_email",
+      "limits": {
+        "your_company": 200,
+        "your_name": 100,
+        "addr": 300,
+        "your_tel": 50,
+        "your_email": 254,
+        "your_comment": 5000
+      },
+      "fields": [
+        {
+          "key": "your_company",
+          "label": "貴社名"
+        },
+        {
+          "key": "your_name",
+          "label": "ご担当者名"
+        },
+        {
+          "key": "addr",
+          "label": "住所"
+        },
+        {
+          "key": "your_tel",
+          "label": "TEL"
+        },
+        {
+          "key": "your_email",
+          "label": "E-mail"
+        },
+        {
+          "key": "your_comment",
+          "label": "お問い合わせ内容"
+        }
+      ]
+    },
+    "entry": {
+      "category": "recruit",
+      "default_target": "hd",
+      "target_from": "to",
+      "notice_subject": "【サンプル】採用問い合わせフォームからのお問い合わせ（{target}）",
+      "notice_intro": "サンプルホールディングスのホームページ（採用問い合わせ）より、\n{target}宛のお問い合わせがありました。\nお問い合わせ内容は以下になります。",
+      "reply": {
+        "enabled": true,
+        "subject": "採用問い合わせありがとうございます（サンプルホールディングス）",
+        "name_field": "your-name",
+        "intro": "この度はサンプルホールディングスの採用にご関心をお寄せいただき、誠にありがとうございます。\n以下の内容で承りました。担当者より改めてご連絡いたしますので、\n恐れ入りますが今しばらくお待ちください。",
+        "outro": "※本メールはシステムからの自動返信です。\n　ご返信は本メールへそのまま返信いただければ担当者に届きます。"
+      },
+      "required": [
+        "your-name",
+        "your-name2",
+        "your-age",
+        "your-tel",
+        "your-email"
+      ],
+      "reply_to_field": "your-email",
+      "limits": {
+        "your-name": 100,
+        "your-name2": 100,
+        "your-age": 50,
+        "your-tel": 50,
+        "your-email": 254,
+        "addr": 300,
+        "company": 100,
+        "job": 100
+      },
+      "fields": [
+        {
+          "key": "your-name",
+          "label": "お名前"
+        },
+        {
+          "key": "your-name2",
+          "label": "フリガナ"
+        },
+        {
+          "key": "your-age",
+          "label": "生年月日"
+        },
+        {
+          "key": "your-tel",
+          "label": "電話番号"
+        },
+        {
+          "key": "your-email",
+          "label": "E-mail"
+        },
+        {
+          "key": "addr",
+          "label": "住所"
+        },
+        {
+          "key": "company",
+          "label": "会社名"
+        },
+        {
+          "key": "job",
+          "label": "応募職種"
+        }
+      ]
+    },
+    "apply": {
+      "category": "recruit",
+      "default_target": "hd",
+      "target_from": "to",
+      "notice_subject": "【サンプル】募集要項ページからの応募（{target}）",
+      "notice_intro": "サンプルホールディングスのホームページ（募集要項の応募フォーム）より、\n{target}宛の応募がありました。\n内容は以下になります。",
+      "reply": {
+        "enabled": true,
+        "subject": "ご応募ありがとうございます（サンプルホールディングス）",
+        "name_field": "your-name",
+        "intro": "この度はご応募いただき、誠にありがとうございます。\n以下の内容で承りました。担当者より改めてご連絡いたしますので、\n恐れ入りますが今しばらくお待ちください。",
+        "outro": "※本メールはシステムからの自動返信です。\n　ご返信は本メールへそのまま返信いただければ担当者に届きます。"
+      },
+      "required": [
+        "your-name",
+        "your-name2",
+        "your-tel"
+      ],
+      "reply_to_field": "your-email",
+      "limits": {
+        "your-name": 100,
+        "your-name2": 100,
+        "your-age": 50,
+        "addr": 300,
+        "your-tel": 50,
+        "your-email": 254,
+        "job": 100,
+        "your-comment": 5000,
+        "your-url": 500,
+        "your-title": 200,
+        "your-tag": 100
+      },
+      "fields": [
+        {
+          "key": "your-tag",
+          "label": "応募先の会社"
+        },
+        {
+          "key": "your-title",
+          "label": "応募した募集要項"
+        },
+        {
+          "key": "your-url",
+          "label": "募集要項のURL"
+        },
+        {
+          "key": "your-name",
+          "label": "お名前"
+        },
+        {
+          "key": "your-name2",
+          "label": "フリガナ"
+        },
+        {
+          "key": "your-age",
+          "label": "生年月日"
+        },
+        {
+          "key": "addr",
+          "label": "住所"
+        },
+        {
+          "key": "your-tel",
+          "label": "TEL"
+        },
+        {
+          "key": "your-email",
+          "label": "E-mail"
+        },
+        {
+          "key": "job",
+          "label": "応募職種"
+        },
+        {
+          "key": "your-comment",
+          "label": "自由記入欄"
+        }
+      ]
+    },
+    "briefing": {
+      "category": "recruit",
+      "default_target": "hd",
+      "target_from": "none",
+      "notice_subject": "【サンプル】会社説明会のお申し込み",
+      "notice_intro": "サンプルホールディングスのホームページ（会社説明会）より、\nお申し込みがありました。\n内容は以下になります。",
+      "reply": {
+        "enabled": true,
+        "subject": "会社説明会のお申し込みありがとうございます（サンプルホールディングス）",
+        "name_field": "your-name",
+        "intro": "この度は会社説明会にお申し込みいただき、誠にありがとうございます。\n以下の内容で承りました。担当者より改めてご連絡いたしますので、\n恐れ入りますが今しばらくお待ちください。",
+        "outro": "※本メールはシステムからの自動返信です。\n　ご返信は本メールへそのまま返信いただければ担当者に届きます。"
+      },
+      "required": [
+        "date",
+        "base",
+        "your-name",
+        "your-tel",
+        "your-email"
+      ],
+      "reply_to_field": "your-email",
+      "limits": {
+        "date": 100,
+        "base": 100,
+        "your-name": 100,
+        "your-tel": 50,
+        "your-email": 254,
+        "your-time": 200
+      },
+      "fields": [
+        {
+          "key": "date",
+          "label": "希望日"
+        },
+        {
+          "key": "base",
+          "label": "希望営業所名"
+        },
+        {
+          "key": "your-name",
+          "label": "お名前"
+        },
+        {
+          "key": "your-tel",
+          "label": "TEL"
+        },
+        {
+          "key": "your-email",
+          "label": "メールアドレス"
+        },
+        {
+          "key": "your-time",
+          "label": "連絡を希望する時間帯"
+        }
+      ]
+    },
+    "inquiry": {
+      "category": "general",
+      "default_target": "hd",
+      "target_from": "field:dept",
+      "aliases": {
+        "営業": "group03",
+        "採用": "group04"
+      },
+      "notice_subject": "【サンプル】部署指定のお問い合わせ（{target}）",
+      "notice_intro": "サンプルホールディングスのホームページ（部署指定のお問い合わせ）より、\n{target}宛のお問い合わせがありました。",
+      "reply": {
+        "enabled": true,
+        "subject": "お問い合わせありがとうございます（サンプルホールディングス）",
+        "name_field": "name",
+        "intro": "この度はお問い合わせいただき、誠にありがとうございます。",
+        "outro": "※本メールはシステムからの自動返信です。"
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "reply_to_field": "email",
+      "fields": [
+        {
+          "key": "dept",
+          "label": "ご希望の部署"
+        },
+        {
+          "key": "name",
+          "label": "お名前"
+        },
+        {
+          "key": "email",
+          "label": "E-mail"
+        },
+        {
+          "key": "address",
+          "label": "住所",
+          "join": [
+            "zip",
+            "city"
+          ],
+          "prefix": {
+            "zip": "〒"
+          }
+        }
+      ]
+    },
+    "memo": {
+      "category": "general",
+      "default_target": "hd",
+      "target_from": "none",
+      "notice_subject": "【サンプル】社内メモ",
+      "notice_intro": "メモが届きました。",
+      "reply": {
+        "enabled": false
+      },
+      "required": [
+        "text"
+      ],
+      "limits": {
+        "text": 50
+      },
+      "fields": [
+        {
+          "key": "text",
+          "label": "メモ"
+        }
+      ]
+    }
+  }
+}

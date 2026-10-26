@@ -1,0 +1,59 @@
+{
+  "id": "equ",
+  "origins": [
+    "https://stg.sample.example.com",
+    "https://demo.sample.example.com",
+    "https://www.sample.example.com",
+    "https://sample.example.com"
+  ],
+  "sender_name": "株式会社サンプル",
+  "turnstile_secret_env": "TURNSTILE_SECRET_KEY",
+  "signature": "--------------------------------------------------\n株式会社サンプル\n〒100-0000 東京都千代田区サンプル1-1-1 サンプルビル1階\nTEL: 00-0000-0000 / FAX: 00-0000-0001\nhttps://www.sample.example.com/\n--------------------------------------------------",
+  "targets": {
+    "main": {
+      "label": "株式会社サンプル",
+      "general": ["info@example.com"],
+      "recruit": ["info@example.com"]
+    }
+  },
+  "forms": {
+    "contact": {
+      "category": "general",
+      "default_target": "main",
+      "target_from": "to",
+      "notice_subject": "コーポレートサイト（sample.example.com）からのお問い合わせ",
+      "notice_intro": "『株式会社サンプル』よりお問い合わせがありました。\nお問い合わせ内容は以下になります。",
+      "reply": {
+        "enabled": true,
+        "subject": "サンプルへのお問い合わせありがとうございます",
+        "name_field": "send_name",
+        "intro": "この度は『株式会社サンプル』へお問い合わせいただき、誠にありがとうございます。\n以下の内容で承りました。担当者より改めてご連絡いたしますので、\n恐れ入りますが今しばらくお待ちください。",
+        "outro": "※本メールはシステムからの自動返信です。\n　ご返信は本メールへそのまま返信いただければ担当者に届きます。"
+      },
+      "required": ["send_name", "send_email"],
+      "reply_to_field": "send_email",
+      "limits": {
+        "send_company": 200,
+        "send_name": 100,
+        "send_furigana": 100,
+        "send_tel": 50,
+        "send_email": 254,
+        "send_zip": 20,
+        "send_pref": 20,
+        "send_add": 300,
+        "send_asktype": 100,
+        "send_comment": 5000
+      },
+      "fields": [
+        {"key": "send_company", "label": "会社名/部署名"},
+        {"key": "send_name", "label": "お名前"},
+        {"key": "send_furigana", "label": "フリガナ"},
+        {"key": "send_tel", "label": "電話番号"},
+        {"key": "send_email", "label": "メールアドレス"},
+        {"key": "address", "label": "住所", "join": ["send_zip", "send_pref", "send_add"], "prefix": {"send_zip": "〒"}},
+        {"key": "send_asktype", "label": "お問い合わせ内容"},
+        {"key": "send_comment", "label": "お問い合わせ詳細"}
+      ]
+    }
+  }
+}
