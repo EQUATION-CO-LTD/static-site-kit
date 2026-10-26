@@ -1,7 +1,7 @@
 package pyfmt
 
 // Python の標準ライブラリの出力を期待値にした表形式のテスト。
-// 期待値は testdata/py_golden.json（testdata/gen_golden.py が html・urllib.parse・json・re から作る）。
+// 期待値は testdata/py_golden.json（Python の html・urllib.parse・json・re で作った値。今は Go 版を正とし、作り直さない）。
 
 import (
 	"os"
