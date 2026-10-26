@@ -1,0 +1,15 @@
+{
+ "routes": [
+  {
+   "route": "/old/",
+   "redirect": "/about/",
+   "statusCode": 301
+  }
+ ],
+ "navigationFallback": {
+  "rewrite": "/404.html"
+ },
+ "globalHeaders": {
+  "X-Frame-Options": "DENY"
+ }
+}

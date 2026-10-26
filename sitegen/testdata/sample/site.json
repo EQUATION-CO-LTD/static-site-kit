@@ -1,0 +1,20 @@
+{
+  "site": "https://sample.example/",
+  "company": "サンプル株式会社",
+  "og_image": "/img/og.png",
+  "logo": "/img/logo.png",
+  "trailing_slash": true,
+  "staging": false,
+  "title_suffix": " | サンプル",
+  "per_page": 2,
+  "nav": [
+    {"label": "ホーム", "url": "/"},
+    {"label": "会社案内", "url": "/about/"},
+    {"label": "お知らせ", "url": "/news/"}
+  ],
+  "link_check_known": ["/legacy/"],
+  "swa": {
+    "navigationFallback": {"rewrite": "/404.html"},
+    "globalHeaders": {"X-Frame-Options": "DENY"}
+  }
+}
