@@ -145,7 +145,7 @@ func (s *Site) emit(html map[string]string) {
 }
 
 // swaConfig は staticwebapp.config.json の中身。redirects.json（と Builder が足した転送）を 301 にし、
-// site.json の swa をそのまま重ねる。staging のときは全ページを role tester に限定して検索に載せない
+// site.json の swa をそのまま重ねる。staging のときは全ページを site.json の staging_roles（既定は tester）に限定して検索に載せない
 func (s *Site) swaConfig() *pyfmt.Obj {
 	srcs := make([]string, 0, len(s.redirects))
 	for k := range s.redirects {
@@ -158,8 +158,10 @@ func (s *Site) swaConfig() *pyfmt.Obj {
 	}
 	swa := pyfmt.AsObj(pyfmt.DeepCopy(pyfmt.Getd(s.conf, "swa", pyfmt.NewObj())))
 	if s.staging {
-		// 検証環境: 全ページを role tester（SWA の招待で付ける）に限定し、検索に載せない
-		routes = append(routes, pyfmt.O("route", "/*", "allowedRoles", []any{"tester"}))
+		// 検証環境: 全ページを staging_roles（既定は SWA の招待で付ける tester）に限定し、検索に載せない。
+		// 招待で付けた役割は配信拠点によって抜けることがあるため、サインインだけで見せたいサイトは ["authenticated"] にする
+		roles := pyfmt.AsList(pyfmt.Getd(s.conf, "staging_roles", []any{"tester"}))
+		routes = append(routes, pyfmt.O("route", "/*", "allowedRoles", roles))
 		pyfmt.AsObj(swa.SetDefault("responseOverrides", pyfmt.NewObj())).Set("401", pyfmt.O("statusCode", pyfmt.IntNum(302), "redirect", "/.auth/login/aad"))
 		pyfmt.AsObj(swa.SetDefault("globalHeaders", pyfmt.NewObj())).Set("X-Robots-Tag", "noindex")
 	}

@@ -339,6 +339,25 @@ func TestStagingOptionOverridesSiteJSON(t *testing.T) {
 	}
 }
 
+func TestStagingRoles(t *testing.T) {
+	for _, c := range []struct {
+		conf string
+		want string
+	}{
+		{`{"site": "https://s.example/", "staging": true}`, `"allowedRoles":["tester"]`},
+		{`{"site": "https://s.example/", "staging": true, "staging_roles": ["authenticated"]}`, `"allowedRoles":["authenticated"]`},
+	} {
+		dir := newSite(t, c.conf, nil)
+		if err := sitegen.Run(opts(dir, func(o *sitegen.Options) { o.SWAConfig = true })); err != nil {
+			t.Fatal(err)
+		}
+		cfg := readFile(t, dir+"/dist/staticwebapp.config.json")
+		if !strings.Contains(strings.Join(strings.Fields(cfg), ""), c.want) {
+			t.Errorf("%s: 閲覧できる役割が %s になっていない\n%s", c.conf, c.want, cfg)
+		}
+	}
+}
+
 // ---------------------------------------------------------------- 書き出し
 
 func TestPagePathRules(t *testing.T) {
