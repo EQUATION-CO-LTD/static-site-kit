@@ -294,8 +294,8 @@ func TestMultiForms(t *testing.T) {
 	}
 }
 
-// 宛先が 2 件の振り分け先は To に 2 件並べ、自動返信の Reply-To は 1 件目になる。
-func TestTwoRecipientsAndReplyTo(t *testing.T) {
+// 宛先が複数の振り分け先は To に上限の 5 件まで並べ、自動返信の Reply-To は 1 件目になる。
+func TestMultipleRecipientsAndReplyTo(t *testing.T) {
 	site := *sites["multi"]
 	site.Targets = map[string]Target{}
 	for k, v := range sites["multi"].Targets {
@@ -303,7 +303,7 @@ func TestTwoRecipientsAndReplyTo(t *testing.T) {
 	}
 	site.Targets["group03"] = Target{
 		Label:   "サンプル商事株式会社",
-		General: []string{"first@example.jp", "second@example.jp", "third@example.jp"}, // 3 件目は切る
+		General: []string{"first@example.jp", "second@example.jp", "third@example.jp", "fourth@example.jp", "fifth@example.jp", "sixth@example.jp"}, // 6 件目は切る
 		Recruit: []string{"r@example.jp"},
 	}
 	two := map[string]*Site{"multi": &site}
@@ -316,8 +316,8 @@ func TestTwoRecipientsAndReplyTo(t *testing.T) {
 	if p == nil {
 		t.Fatalf("破棄された: %s", reason)
 	}
-	if !reflect.DeepEqual(p.Notice.To, []string{"first@example.jp", "second@example.jp"}) {
-		t.Errorf("To = %v, want 2 件", p.Notice.To)
+	if !reflect.DeepEqual(p.Notice.To, []string{"first@example.jp", "second@example.jp", "third@example.jp", "fourth@example.jp", "fifth@example.jp"}) {
+		t.Errorf("To = %v, want 5 件", p.Notice.To)
 	}
 	if p.Reply == nil || p.Reply.ReplyTo != "first@example.jp" {
 		t.Errorf("自動返信の Reply-To は 1 件目のはず: %+v", p.Reply)

@@ -63,7 +63,7 @@ type Field struct {
 const (
 	defaultLimit  = 1000  // limits に無い項目の上限
 	maxTotalRunes = 20000 // 1 メッセージの項目値の合計上限。超えたら破棄
-	maxRecipients = 2
+	maxRecipients = 5
 )
 
 // inputKeys はフォームが受け取ってよい入力キー（本文の項目・結合元・振り分けの項目）。

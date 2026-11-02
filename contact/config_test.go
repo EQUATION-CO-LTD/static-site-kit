@@ -50,7 +50,7 @@ func TestLoadSitesRejectsInvalid(t *testing.T) {
 		{"id が空", fstest.MapFS{"a.json": {Data: replace(`"id": "equ"`, `"id": ""`)}}, "id が空"},
 		{"id の重複", fstest.MapFS{"a.json": {Data: valid}, "b.json": {Data: valid}}, "重複"},
 		{"宛先が不正", fstest.MapFS{"a.json": {Data: replace(`["info@example.com"]`, `["not-an-address"]`)}}, "不正"},
-		{"宛先が 3 件", fstest.MapFS{"a.json": {Data: replace(`"general": ["info@example.com"]`, `"general": ["a@example.com","b@example.com","c@example.com"]`)}}, "最大"},
+		{"宛先が 6 件", fstest.MapFS{"a.json": {Data: replace(`"general": ["info@example.com"]`, `"general": ["a@example.com","b@example.com","c@example.com","d@example.com","e@example.com","f@example.com"]`)}}, "最大"},
 		{"category が不正", fstest.MapFS{"a.json": {Data: replace(`"category": "general"`, `"category": "other"`)}}, "category"},
 		{"default_target が無い", fstest.MapFS{"a.json": {Data: replace(`"default_target": "main"`, `"default_target": "nothing"`)}}, "default_target"},
 		{"target_from が不正", fstest.MapFS{"a.json": {Data: replace(`"target_from": "to"`, `"target_from": "x"`)}}, "target_from"},
